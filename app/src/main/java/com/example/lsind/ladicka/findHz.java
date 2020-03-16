@@ -102,4 +102,3 @@ public class findHz {
 
         return index;
     }
-}
