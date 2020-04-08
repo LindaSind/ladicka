@@ -2,53 +2,107 @@ package com.example.lsind.ladicka
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Paint
+import android.media.AudioFormat
+import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.support.v7.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Switch
 import kotlinx.android.synthetic.main.activity_main.*
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.util.Log;
-import java.io.File
+import kotlin.concurrent.thread
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
-
-    var mediaRecorder: MediaRecorder? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mediaRecorder = MediaRecorder()
+
+    }
 
 
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun record(switch: View) {
+        switch as Switch
+        if (switch.isChecked) {
+            thread {
+                val recorder = AudioRecord(MediaRecorder.AudioSource.DEFAULT, SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE)
+                assert(recorder.state != 0)
+                if (ContextCompat.checkSelfPermission(this,
+                                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
+                    ActivityCompat.requestPermissions(this, permissions,0)
+                } else {
+                    recorder.startRecording()
+                }
+                val buffer = ByteArray(BUFFER_SIZE)
+                while (switch.isChecked) {
+                    recorder.read(buffer, 0, BUFFER_SIZE)
+                    val wave = unpack(buffer)
+                    Fft.autocorrelation(wave)
+                    render(wave)
+                }
+                recorder.release()
+            }
+        }
+    }
 
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 0);
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun render(corr: DoubleArray) {
+        val points = FloatArray(corr.size * 2)
+        val width = surfaceView.width
+        val height = surfaceView.height
+        for (i in corr.indices) {
+            points[2 * i] = i * width / corr.size.toFloat()
+            points[2 * i + 1] = 100*(corr[i] * height / corr[0]).toFloat()
+        }
+        runOnUiThread {
+            val surface = surfaceView.holder.surface
+            val canvas = surface.lockHardwareCanvas()
+            canvas.drawRGB(255, 255, 255)
+            canvas.drawLines(points, Paint())
+            surface.unlockCanvasAndPost(canvas)
+        }
+        runOnUiThread {
+            val peak = findPeak(corr)
+            var frequency = SAMPLING_RATE_IN_HZ / peak
+            frequency = round(10 * frequency) / 10
+            textView.text = "f = ${frequency} Hz"
+        }
+    }
 
-
+    companion object {
+        fun unpack(bytes: ByteArray): DoubleArray {
+            val samples = DoubleArray(bytes.size / 2)
+            for (i in samples.indices) {
+                samples[i] = bytes[2 * i + 1] + bytes[2 * i] / 256.0 - 127.5
+            }
+            return samples
         }
 
-        val outputFile = File.createTempFile("prefix", ".ogg")
-        mediaRecorder?.setOutputFile(outputFile)
-        mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        fun findPeak(wave: DoubleArray): Double {
+            var i = 0
+            while (wave[i + 1] < wave[i]) i++
+            while (wave[i+1] > wave[i]) i++
+            return i.toDouble() // todo: interpolate
+        }
 
-    }
+        fun nearestPowerOfTwo(x: Int): Int {
+            val result = Integer.highestOneBit(x)
+            return if (x == result) result else result shl 1
+        }
 
-    fun startRecording(v: View){
-        mediaRecorder?.prepare()
-        mediaRecorder?.start()
-        textView.setText("recording started!")
-    }
-
-    fun stopRecording(v: View){
-        mediaRecorder?.stop()
-        mediaRecorder?.release()
-        textView.setText("recording ended!")
+        private var SAMPLING_RATE_IN_HZ = 44100
+        private var CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
+        private var AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
+        private var BUFFER_SIZE_FACTOR = 2
+        private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
 }
  
