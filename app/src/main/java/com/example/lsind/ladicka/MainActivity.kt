@@ -2,6 +2,7 @@ package com.example.lsind.ladicka
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.Paint
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -18,29 +19,29 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.concurrent.thread
 import kotlin.math.round
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
     }
-
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun record(switch: View) {
         switch as Switch
         if (switch.isChecked) {
+
+            if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
+                ActivityCompat.requestPermissions(this, permissions, 0)
+            }
             thread {
                 val recorder = AudioRecord(MediaRecorder.AudioSource.DEFAULT, SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE)
                 assert(recorder.state != 0)
-                if (ContextCompat.checkSelfPermission(this,
-                                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                    val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
-                    ActivityCompat.requestPermissions(this, permissions,0)
-                } else {
-                    recorder.startRecording()
-                }
+
+                recorder.startRecording()
                 val buffer = ByteArray(BUFFER_SIZE)
                 while (switch.isChecked) {
                     recorder.read(buffer, 0, BUFFER_SIZE)
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val height = surfaceView.height
         for (i in corr.indices) {
             points[2 * i] = i * width / corr.size.toFloat()
-            points[2 * i + 1] = 100*(corr[i] * height / corr[0]).toFloat()
+            points[2 * i + 1] = 1000*(corr[i] * height / corr[0]).toFloat()
         }
         runOnUiThread {
             val surface = surfaceView.holder.surface
@@ -72,9 +73,10 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             val peak = findPeak(corr)
             var frequency = SAMPLING_RATE_IN_HZ / peak
-            frequency = round(10 * frequency) / 10
+            frequency = round(10*frequency) /10
             textView.text = "f = ${frequency} Hz"
         }
+
     }
 
     companion object {
@@ -89,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         fun findPeak(wave: DoubleArray): Double {
             var i = 0
             while (wave[i + 1] < wave[i]) i++
-            while (wave[i+1] > wave[i]) i++
+            while (wave[i + 1] > wave[i]) i++
             return i.toDouble() // todo: interpolate
         }
 
@@ -101,8 +103,53 @@ class MainActivity : AppCompatActivity() {
         private var SAMPLING_RATE_IN_HZ = 44100
         private var CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         private var AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
-        private var BUFFER_SIZE_FACTOR = 2
+        private var BUFFER_SIZE_FACTOR = 5
         private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
+
+    val buttons = arrayOf (buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
+    fun toneDifference(buttons: View) {
+        var difference = 0
+
+        if (buttonE2.isPressed) {
+            difference = frequency - 82.4
+            buttonE2.setBackgroundColor (Color.GREEN)
+        }
+        if (buttonA.isPressed) {
+            difference = frequency - 110.8
+            buttonA.setBackgroundColor (Color.GREEN)
+        }
+        if (buttonD.isPressed) {
+            difference = frequency - 146.8
+            buttonD.setBackgroundColor (Color.GREEN)
+        }
+        if (buttonG.isPressed) {
+            difference = frequency - 196.0
+            buttonG.setBackgroundColor (Color.GREEN)
+        }
+        if (buttonH.isPressed) {
+            difference = frequency - 246.9
+            buttonH.setBackgroundColor (Color.GREEN)
+        }
+        if (buttonE4.isPressed) {
+            difference = frequency - 329.6
+            buttonE4.setBackgroundColor (Color.GREEN)
+        }
+        else{
+            textView4.text = "Press a button."
+        }
+
+        textView3.text = "difference: ${difference} Hz"
+        if (difference < 0.1) {
+            arrowLeft.setBackgroundColor(Color.RED)
+        }
+        if (difference > 0.1) {
+            arrowRight.setBackgroundColor(Color.RED)
+        }
+        else{
+            textView2.setTextColor (Color.GREEN)
+        }
+    }
+
 }
- 
+
