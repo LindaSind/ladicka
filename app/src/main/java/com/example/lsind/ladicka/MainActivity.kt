@@ -50,6 +50,16 @@ class MainActivity : AppCompatActivity() {
                     render(wave)
                 }
                 recorder.release()
+
+                while(switch.isChecked) {
+                    var button = 0
+                    buttonE2.setOnClickListener {
+                        button = 1
+                    }
+                    buttonA.setOnClickListener {
+                        button = 2
+                    }
+                }
             }
         }
     }
@@ -82,25 +92,14 @@ class MainActivity : AppCompatActivity() {
     fun toneDifference(frequency: Double) {
         var difference = 0.0
 
-        if (buttonE2.isPressed) {
-            difference = frequency - 82.4
-        }
-        if (buttonA.isPressed) {
-            difference = frequency - 110.8
-        }
-        if (buttonD.isPressed) {
-            difference = frequency - 146.8
-        }
-        if (buttonG.isPressed) {
-            difference = frequency - 196.0
-        }
-        if (buttonH.isPressed) {
-            difference = frequency - 246.9
-        }
-        if (buttonE4.isPressed) {
-            difference = frequency - 329.6
-        } else {
+        while (button == 0){
             textView4.text = "Press a button."
+        }
+        while(button == 1){
+            difference = frequency - 82.0
+        }
+        while(button == 2){
+            difference = frequency - 110.8
         }
 
         textView3.text = "difference: ${difference} Hz"
@@ -141,5 +140,8 @@ class MainActivity : AppCompatActivity() {
         private var BUFFER_SIZE_FACTOR = 5
         private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
+
+
+
 }
 
