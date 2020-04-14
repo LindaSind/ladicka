@@ -75,8 +75,43 @@ class MainActivity : AppCompatActivity() {
             var frequency = SAMPLING_RATE_IN_HZ / peak
             frequency = round(10*frequency) /10
             textView.text = "f = ${frequency} Hz"
+            toneDifference(frequency)
         }
 
+    }
+    fun toneDifference(frequency: Double) {
+        var difference = 0.0
+
+        if (buttonE2.isPressed) {
+            difference = frequency - 82.4
+        }
+        if (buttonA.isPressed) {
+            difference = frequency - 110.8
+        }
+        if (buttonD.isPressed) {
+            difference = frequency - 146.8
+        }
+        if (buttonG.isPressed) {
+            difference = frequency - 196.0
+        }
+        if (buttonH.isPressed) {
+            difference = frequency - 246.9
+        }
+        if (buttonE4.isPressed) {
+            difference = frequency - 329.6
+        } else {
+            textView4.text = "Press a button."
+        }
+
+        textView3.text = "difference: ${difference} Hz"
+        if (difference < 0.1) {
+            arrowLeft.setBackgroundColor(Color.RED)
+        }
+        if (difference > 0.1) {
+            arrowRight.setBackgroundColor(Color.RED)
+        } else {
+            textView2.setTextColor(Color.GREEN)
+        }
     }
 
     companion object {
@@ -106,50 +141,5 @@ class MainActivity : AppCompatActivity() {
         private var BUFFER_SIZE_FACTOR = 5
         private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
-
-    val buttons = arrayOf (buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
-    fun toneDifference(buttons: View) {
-        var difference = 0
-
-        if (buttonE2.isPressed) {
-            difference = frequency - 82.4
-            buttonE2.setBackgroundColor (Color.GREEN)
-        }
-        if (buttonA.isPressed) {
-            difference = frequency - 110.8
-            buttonA.setBackgroundColor (Color.GREEN)
-        }
-        if (buttonD.isPressed) {
-            difference = frequency - 146.8
-            buttonD.setBackgroundColor (Color.GREEN)
-        }
-        if (buttonG.isPressed) {
-            difference = frequency - 196.0
-            buttonG.setBackgroundColor (Color.GREEN)
-        }
-        if (buttonH.isPressed) {
-            difference = frequency - 246.9
-            buttonH.setBackgroundColor (Color.GREEN)
-        }
-        if (buttonE4.isPressed) {
-            difference = frequency - 329.6
-            buttonE4.setBackgroundColor (Color.GREEN)
-        }
-        else{
-            textView4.text = "Press a button."
-        }
-
-        textView3.text = "difference: ${difference} Hz"
-        if (difference < 0.1) {
-            arrowLeft.setBackgroundColor(Color.RED)
-        }
-        if (difference > 0.1) {
-            arrowRight.setBackgroundColor(Color.RED)
-        }
-        else{
-            textView2.setTextColor (Color.GREEN)
-        }
-    }
-
 }
 
