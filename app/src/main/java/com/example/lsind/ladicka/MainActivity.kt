@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+    
     fun toneDifference(frequency: Double) {
         var difference = 0.0
 
