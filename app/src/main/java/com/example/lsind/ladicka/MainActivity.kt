@@ -89,8 +89,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-    
-    fun toneDifference(frequency: Double) {
+
+    fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
 
         while (button == 0){
