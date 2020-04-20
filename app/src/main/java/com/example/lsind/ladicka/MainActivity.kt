@@ -21,11 +21,20 @@ import kotlin.math.round
 
 
 class MainActivity : AppCompatActivity() {
+    var button = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        buttonE2.setOnClickListener {
+            button = 1
+        }
+        buttonA.setOnClickListener {
+            button = 2
+        }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun record(switch: View) {
@@ -50,18 +59,9 @@ class MainActivity : AppCompatActivity() {
                     render(wave)
                 }
                 recorder.release()
-
-                while(switch.isChecked) {
-                    var button = 0
-                    buttonE2.setOnClickListener {
-                        button = 1
-                    }
-                    buttonA.setOnClickListener {
-                        button = 2
-                    }
-                }
             }
         }
+        textView5.text = "button = ${button}"
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             var frequency = SAMPLING_RATE_IN_HZ / peak
             frequency = round(10*frequency) /10
             textView.text = "f = ${frequency} Hz"
-            toneDifference(frequency)
+            toneDifference(button, frequency)
         }
 
     }
@@ -93,18 +93,18 @@ class MainActivity : AppCompatActivity() {
     fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
 
-        while (button == 0){
+        if (button == 0){
             textView4.text = "Press a button."
         }
-        while(button == 1){
+        if (button == 1){
             difference = frequency - 82.0
         }
-        while(button == 2){
+        if (button == 2){
             difference = frequency - 110.8
         }
 
         textView3.text = "difference: ${difference} Hz"
-        if (difference < 0.1) {
+        if (difference < -0.1) {
             arrowLeft.setBackgroundColor(Color.RED)
         }
         if (difference > 0.1) {
