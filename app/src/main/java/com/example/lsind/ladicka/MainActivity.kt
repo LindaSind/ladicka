@@ -94,21 +94,63 @@ class MainActivity : AppCompatActivity() {
 
         if (button == 1){
             difference = frequency - 82.0
+            buttonE2.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonA.setBackgroundResource(R.drawable.custom_button)
+            buttonD.setBackgroundResource(R.drawable.custom_button)
+            buttonG.setBackgroundResource(R.drawable.custom_button)
+            buttonH.setBackgroundResource(R.drawable.custom_button)
+            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 2){
             difference = frequency - 110.8
+            buttonA.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonE2.setBackgroundResource(R.drawable.custom_button)
+            buttonD.setBackgroundResource(R.drawable.custom_button)
+            buttonG.setBackgroundResource(R.drawable.custom_button)
+            buttonH.setBackgroundResource(R.drawable.custom_button)
+            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 3){
             difference = frequency - 146.3
+            buttonD.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonE2.setBackgroundResource(R.drawable.custom_button)
+            buttonA.setBackgroundResource(R.drawable.custom_button)
+            buttonG.setBackgroundResource(R.drawable.custom_button)
+            buttonH.setBackgroundResource(R.drawable.custom_button)
+            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 4){
             difference = frequency - 196.0
+            buttonG.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonE2.setBackgroundResource(R.drawable.custom_button)
+            buttonA.setBackgroundResource(R.drawable.custom_button)
+            buttonD.setBackgroundResource(R.drawable.custom_button)
+            buttonH.setBackgroundResource(R.drawable.custom_button)
+            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 5){
             difference = frequency - 246.9
+            buttonH.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonE2.setBackgroundResource(R.drawable.custom_button)
+            buttonA.setBackgroundResource(R.drawable.custom_button)
+            buttonD.setBackgroundResource(R.drawable.custom_button)
+            buttonG.setBackgroundResource(R.drawable.custom_button)
+            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 6){
             difference = frequency - 329.6
+            buttonE4.setBackgroundResource(R.drawable.pressed_button)
+
+            buttonE2.setBackgroundResource(R.drawable.custom_button)
+            buttonA.setBackgroundResource(R.drawable.custom_button)
+            buttonD.setBackgroundResource(R.drawable.custom_button)
+            buttonG.setBackgroundResource(R.drawable.custom_button)
+            buttonH.setBackgroundResource(R.drawable.custom_button)
         }
         difference = round(10*difference) /10
 
