@@ -3,7 +3,6 @@ package com.example.lsind.ladicka
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Paint
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -26,12 +25,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         buttonE2.setOnClickListener {
             button = 1
         }
         buttonA.setOnClickListener {
             button = 2
+        }
+        buttonD.setOnClickListener {
+            button = 3
+        }
+        buttonG.setOnClickListener {
+            button = 4
+        }
+        buttonH.setOnClickListener {
+            button = 5
+        }
+        buttonE4.setOnClickListener {
+            button = 6
         }
     }
 
@@ -61,56 +71,61 @@ class MainActivity : AppCompatActivity() {
                 recorder.release()
             }
         }
-        textView5.text = "button = ${button}"
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun render(corr: DoubleArray) {
-        val points = FloatArray(corr.size * 2)
-        val width = surfaceView.width
-        val height = surfaceView.height
-        for (i in corr.indices) {
-            points[2 * i] = i * width / corr.size.toFloat()
-            points[2 * i + 1] = 1000*(corr[i] * height / corr[0]).toFloat()
-        }
-        runOnUiThread {
-            val surface = surfaceView.holder.surface
-            val canvas = surface.lockHardwareCanvas()
-            canvas.drawRGB(255, 255, 255)
-            canvas.drawLines(points, Paint())
-            surface.unlockCanvasAndPost(canvas)
-        }
         runOnUiThread {
             val peak = findPeak(corr)
             var frequency = SAMPLING_RATE_IN_HZ / peak
-            frequency = round(10*frequency) /10
+            frequency = round(10 * frequency) / 10
             textView.text = "f = ${frequency} Hz"
             toneDifference(button, frequency)
         }
-
     }
 
     fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
 
-        if (button == 0){
-            textView4.text = "Press a button."
+        textView4.text = "Press a button."
+        if (button != 0) {
+            textView4.text = ""
         }
+
         if (button == 1){
             difference = frequency - 82.0
         }
         if (button == 2){
             difference = frequency - 110.8
         }
+        if (button == 3){
+            difference = frequency - 146.3
+        }
+        if (button == 4){
+            difference = frequency - 196.0
+        }
+        if (button == 5){
+            difference = frequency - 246.9
+        }
+        if (button == 6){
+            difference = frequency - 329.6
+        }
+        difference = round(10*difference) /10
 
         textView3.text = "difference: ${difference} Hz"
-        if (difference < -0.1) {
+        if (difference < -0.5) {
             arrowLeft.setBackgroundColor(Color.RED)
+            arrowRight.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
         }
-        if (difference > 0.1) {
+        if (difference > 0.5) {
             arrowRight.setBackgroundColor(Color.RED)
+            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
         } else {
             textView2.setTextColor(Color.GREEN)
+            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
+            arrowRight.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 
@@ -141,8 +156,5 @@ class MainActivity : AppCompatActivity() {
         private var BUFFER_SIZE_FACTOR = 5
         private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
-
-
-
 }
 
