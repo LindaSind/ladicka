@@ -86,88 +86,54 @@ class MainActivity : AppCompatActivity() {
 
     fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
+        var buttons = arrayOf(buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
 
         textView4.text = "Press a button."
         if (button != 0) {
+            buttons.forEach { it.setBackgroundResource(R.drawable.custom_button) }
+            buttons[button-1].setBackgroundResource(R.drawable.pressed_button)
             textView4.text = ""
         }
 
+
+
         if (button == 1){
             difference = frequency - 82.0
-            buttonE2.setBackgroundResource(R.drawable.pressed_button)
-
-            buttonA.setBackgroundResource(R.drawable.custom_button)
-            buttonD.setBackgroundResource(R.drawable.custom_button)
-            buttonG.setBackgroundResource(R.drawable.custom_button)
-            buttonH.setBackgroundResource(R.drawable.custom_button)
-            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 2){
             difference = frequency - 110.8
-            buttonA.setBackgroundResource(R.drawable.pressed_button)
-
-            buttonE2.setBackgroundResource(R.drawable.custom_button)
-            buttonD.setBackgroundResource(R.drawable.custom_button)
-            buttonG.setBackgroundResource(R.drawable.custom_button)
-            buttonH.setBackgroundResource(R.drawable.custom_button)
-            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 3){
             difference = frequency - 146.3
-            buttonD.setBackgroundResource(R.drawable.pressed_button)
-
-            buttonE2.setBackgroundResource(R.drawable.custom_button)
-            buttonA.setBackgroundResource(R.drawable.custom_button)
-            buttonG.setBackgroundResource(R.drawable.custom_button)
-            buttonH.setBackgroundResource(R.drawable.custom_button)
-            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 4){
             difference = frequency - 196.0
-            buttonG.setBackgroundResource(R.drawable.pressed_button)
 
-            buttonE2.setBackgroundResource(R.drawable.custom_button)
-            buttonA.setBackgroundResource(R.drawable.custom_button)
-            buttonD.setBackgroundResource(R.drawable.custom_button)
-            buttonH.setBackgroundResource(R.drawable.custom_button)
-            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 5){
             difference = frequency - 246.9
-            buttonH.setBackgroundResource(R.drawable.pressed_button)
-
-            buttonE2.setBackgroundResource(R.drawable.custom_button)
-            buttonA.setBackgroundResource(R.drawable.custom_button)
-            buttonD.setBackgroundResource(R.drawable.custom_button)
-            buttonG.setBackgroundResource(R.drawable.custom_button)
-            buttonE4.setBackgroundResource(R.drawable.custom_button)
         }
         if (button == 6){
             difference = frequency - 329.6
-            buttonE4.setBackgroundResource(R.drawable.pressed_button)
-
-            buttonE2.setBackgroundResource(R.drawable.custom_button)
-            buttonA.setBackgroundResource(R.drawable.custom_button)
-            buttonD.setBackgroundResource(R.drawable.custom_button)
-            buttonG.setBackgroundResource(R.drawable.custom_button)
-            buttonH.setBackgroundResource(R.drawable.custom_button)
         }
         difference = round(10*difference) /10
 
         textView3.text = "difference: ${difference} Hz"
-        if (difference < -0.5) {
-            arrowLeft.setBackgroundColor(Color.RED)
-            arrowRight.setBackgroundColor(Color.TRANSPARENT)
-            textView2.setTextColor(Color.TRANSPARENT)
-        }
+
         if (difference > 0.5) {
             arrowRight.setBackgroundColor(Color.RED)
             arrowLeft.setBackgroundColor(Color.TRANSPARENT)
             textView2.setTextColor(Color.TRANSPARENT)
-        } else {
-            textView2.setTextColor(Color.GREEN)
-            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
+        }
+        else if (difference < -0.5) {
+            arrowLeft.setBackgroundColor(Color.RED)
             arrowRight.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
+        }
+        else {
+            textView2.setTextColor(Color.GREEN)
+            arrowRight.setBackgroundColor(Color.TRANSPARENT)
+            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 
