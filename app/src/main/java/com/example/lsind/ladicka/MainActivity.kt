@@ -74,6 +74,13 @@ class MainActivity : AppCompatActivity() {
                 recorder.release()
                 runOnUiThread {
                     buttons.forEach { it.setBackgroundResource(R.drawable.custom_button) }
+                    arrowRight.setBackgroundColor(Color.TRANSPARENT)
+                    arrowLeft.setBackgroundColor(Color.TRANSPARENT)
+                    textView2.setTextColor(Color.TRANSPARENT)
+                    textView.text = "f = 0 Hz"
+                    textView3.text = "difference = 0 Hz"
+                    textView4.text = ""
+                    button = 0
                 }
             }
         }
@@ -94,15 +101,12 @@ class MainActivity : AppCompatActivity() {
     fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
 
-
         textView4.text = "Press a button."
         if (button != 0) {
             buttons.forEach { it.setBackgroundResource(R.drawable.custom_button) }
             buttons[button-1].setBackgroundResource(R.drawable.pressed_button)
             textView4.text = ""
         }
-
-
 
         if (button == 1){
             difference = frequency - 82.0
