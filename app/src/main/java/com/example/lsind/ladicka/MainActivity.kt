@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Button
 import android.widget.Switch
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.concurrent.thread
@@ -21,6 +22,7 @@ import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
     var button = 0
+    var buttons = arrayOf<Button>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         buttonE4.setOnClickListener {
             button = 6
         }
+        buttons = arrayOf(buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
     }
 
 
@@ -69,8 +72,12 @@ class MainActivity : AppCompatActivity() {
                     render(wave)
                 }
                 recorder.release()
+                runOnUiThread {
+                    buttons.forEach { it.setBackgroundResource(R.drawable.custom_button) }
+                }
             }
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -86,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
     fun toneDifference(button: Int, frequency: Double) {
         var difference = 0.0
-        var buttons = arrayOf(buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
+
 
         textView4.text = "Press a button."
         if (button != 0) {
