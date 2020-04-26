@@ -76,8 +76,6 @@ class MainActivity : AppCompatActivity() {
                     arrowRight.setBackgroundColor(Color.TRANSPARENT)
                     arrowLeft.setBackgroundColor(Color.TRANSPARENT)
                     textView2.setTextColor(Color.TRANSPARENT)
-                    textView.text = "f = 0 Hz"
-                    textView3.text = "difference = 0 Hz"
                     textView4.text = ""
                     button = 0
                 }
@@ -92,7 +90,6 @@ class MainActivity : AppCompatActivity() {
             val peak = findPeak(corr)
             var frequency = SAMPLING_RATE_IN_HZ / peak
             frequency = round(10 * frequency) / 10
-            textView.text = "f = ${frequency} Hz"
             toneDifference(button, frequency)
         }
     }
@@ -125,8 +122,6 @@ class MainActivity : AppCompatActivity() {
             difference = frequency - 329.6
         }
         difference = round(10*difference) /10
-
-        textView3.text = "difference: ${difference} Hz"
 
         if (difference > 0.5 && difference < 1.0) {
             arrowRight.setBackgroundColor(Color.rgb(255, 145, 0))
