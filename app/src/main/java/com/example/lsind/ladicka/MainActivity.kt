@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         buttons = arrayOf(buttonE2, buttonA, buttonD, buttonG, buttonH, buttonE4)
     }
 
-
     @RequiresApi(Build.VERSION_CODES.M)
     fun record(switch: View) {
         switch as Switch
@@ -81,7 +80,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
