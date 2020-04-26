@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.Switch
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.concurrent.thread
+import kotlin.math.abs
 import kotlin.math.round
 
 
@@ -53,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     fun record(switch: View) {
         switch as Switch
         if (switch.isChecked) {
-
             if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             thread {
                 val recorder = AudioRecord(MediaRecorder.AudioSource.DEFAULT, SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE)
                 assert(recorder.state != 0)
-
                 recorder.startRecording()
                 val buffer = ByteArray(BUFFER_SIZE)
                 while (switch.isChecked) {
@@ -107,7 +106,6 @@ class MainActivity : AppCompatActivity() {
             buttons[button-1].setBackgroundResource(R.drawable.pressed_button)
             textView4.text = ""
         }
-
         if (button == 1){
             difference = frequency - 82.0
         }
@@ -119,7 +117,6 @@ class MainActivity : AppCompatActivity() {
         }
         if (button == 4){
             difference = frequency - 196.0
-
         }
         if (button == 5){
             difference = frequency - 246.9
@@ -131,13 +128,28 @@ class MainActivity : AppCompatActivity() {
 
         textView3.text = "difference: ${difference} Hz"
 
-        if (difference > 0.5) {
+        if (difference > 0.5 && difference < 1.0) {
+            arrowRight.setBackgroundColor(Color.rgb(255, 145, 0))
+            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
+        }
+        else if (difference in 1.0..50.0) {
             arrowRight.setBackgroundColor(Color.RED)
             arrowLeft.setBackgroundColor(Color.TRANSPARENT)
             textView2.setTextColor(Color.TRANSPARENT)
         }
-        else if (difference < -0.5) {
+        else if (difference < -0.5 && difference > -1.0) {
+            arrowLeft.setBackgroundColor(Color.rgb(255, 145, 0))
+            arrowRight.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
+        }
+        else if (difference in -50.0..-1.0) {
             arrowLeft.setBackgroundColor(Color.RED)
+            arrowRight.setBackgroundColor(Color.TRANSPARENT)
+            textView2.setTextColor(Color.TRANSPARENT)
+        }
+        else if (abs(difference) > 50.0){
+            arrowLeft.setBackgroundColor(Color.TRANSPARENT)
             arrowRight.setBackgroundColor(Color.TRANSPARENT)
             textView2.setTextColor(Color.TRANSPARENT)
         }
@@ -161,7 +173,7 @@ class MainActivity : AppCompatActivity() {
             var i = 0
             while (wave[i + 1] < wave[i]) i++
             while (wave[i + 1] > wave[i]) i++
-            return i.toDouble() // todo: interpolate
+            return i.toDouble()
         }
 
         fun nearestPowerOfTwo(x: Int): Int {
@@ -172,8 +184,7 @@ class MainActivity : AppCompatActivity() {
         private var SAMPLING_RATE_IN_HZ = 44100
         private var CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         private var AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
-        private var BUFFER_SIZE_FACTOR = 5
+        private var BUFFER_SIZE_FACTOR = 8
         private val BUFFER_SIZE = nearestPowerOfTwo(AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR)
     }
 }
-
